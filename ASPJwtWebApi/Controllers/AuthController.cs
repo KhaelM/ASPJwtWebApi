@@ -51,7 +51,8 @@ namespace ASPJwtWebApi.Controllers
         private string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>() {
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, "Admin")
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("AppSettings:Token").Value));
