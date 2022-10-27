@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ASPJwtWebApi.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,10 +15,12 @@ namespace ASPJwtWebApi.Controllers
     {
         public static User user = new User();
         private readonly IConfiguration configuration;
+        private readonly IUserService userService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IUserService userService)
         {
             this.configuration = configuration;
+            this.userService = userService;
         }
 
         [HttpPost("register")]
@@ -29,6 +33,16 @@ namespace ASPJwtWebApi.Controllers
             user.PasswordSalt = passwordSalt;
 
             return Ok(user);
+        }
+        [HttpGet, Authorize]
+        public ActionResult<string> GetMe()
+        {
+            var username = userService.GetMyName();
+            return Ok(username);
+            //var username = User?.Identity?.Name;
+            //var username2 = User.FindFirstValue(ClaimTypes.Name);
+            //var role = User.FindFirstValue(ClaimTypes.Role);
+            //return Ok(new { username, username2, role});
         }
 
         [HttpPost("login")]
